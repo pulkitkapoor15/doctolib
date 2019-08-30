@@ -34,8 +34,11 @@ export default async function getAvailabilities(date) {
   for (const opening of openings) {
     for ( let date = moment(opening.starts_at); date.isBefore(opening.ends_at); date.add(30, "minutes")) {
       const getAvailabilityForADay = availabilities.get(date.format("d"));
-      if (opening.starts_at - getAvailabilityForADay.date.getTime() < 86400000)
-        getAvailabilityForADay.slots.push(date.format("H:mm"));
+      if (opening.starts_at - getAvailabilityForADay.date.getTime() < 86400000) {
+        if(getAvailabilityForADay.slots.indexOf(date.format("H:mm")) == -1) {
+          getAvailabilityForADay.slots.push(date.format("H:mm"));
+        }
+      }
     }
   }
   for (const busySlot of busySlots) {
@@ -47,6 +50,5 @@ export default async function getAvailabilities(date) {
     }
   }
   finalAvailableSlots = finalAvailableSlots.concat(Array.from(availabilities.values()));
-
-  return finalAvailableSlots;
+  return finalAvailableSlots; 
 }
